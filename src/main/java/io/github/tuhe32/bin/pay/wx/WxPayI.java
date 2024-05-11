@@ -1,5 +1,6 @@
 package io.github.tuhe32.bin.pay.wx;
 
+import com.github.binarywang.wxpay.config.WxPayConfig;
 import io.github.tuhe32.bin.pay.common.exception.PayException;
 import com.github.binarywang.wxpay.bean.notify.SignatureHeader;
 import com.github.binarywang.wxpay.bean.notify.WxPayNotifyV3Result;
@@ -13,12 +14,66 @@ import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderV3Result;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * @author 刘斌
  * @date 2024/4/30 12:35
  */
 public interface WxPayI {
+
+    /**
+     * 获取配置
+     * @return 可能为null的WxPayConfig对象
+     */
+    WxPayConfig getConfig();
+
+    /**
+     * 设置配置
+     * @param config 配置对象
+     */
+    void setConfig(WxPayConfig config);
+
+    /**
+     * 添加配置
+     * @param mchId 商户ID
+     * @param wxPayConfig 配置对象
+     */
+    void addConfig(String mchId, WxPayConfig wxPayConfig);
+
+    /**
+     * 移除配置
+     * @param mchId 商户ID
+     */
+    void removeConfig(String mchId);
+
+    /**
+     * 设置多配置
+     * @param wxPayConfigMap 多个配置的映射表
+     */
+    void setMultiConfig(Map<String, WxPayConfig> wxPayConfigMap);
+
+    /**
+     * 设置多配置并指定默认应用ID
+     * @param wxPayConfigMap 多个配置的映射表
+     * @param defaultMchId 默认商户ID
+     */
+    void setMultiConfig(Map<String, WxPayConfig> wxPayConfigMap, String defaultMchId);
+
+    /**
+     * 切换至指定商户ID的配置
+     * @param mchId 商户ID
+     * @return 是否切换成功
+     */
+    boolean switchover(String mchId);
+
+    /**
+     * 切换至指定商户ID的配置并返回当前对象
+     * @param mchId 商户ID
+     * @return 是否切换成功
+     * @throws PayException 如果找不到指定应用ID的配置
+     */
+    boolean switchoverTo(String mchId) throws PayException;
 
     /**
      * 扫码支付

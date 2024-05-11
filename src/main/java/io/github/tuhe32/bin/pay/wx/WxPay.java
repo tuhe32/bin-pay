@@ -1,5 +1,6 @@
 package io.github.tuhe32.bin.pay.wx;
 
+import com.github.binarywang.wxpay.config.WxPayConfig;
 import io.github.tuhe32.bin.pay.common.exception.PayException;
 import com.github.binarywang.wxpay.bean.notify.SignatureHeader;
 import com.github.binarywang.wxpay.bean.notify.WxPayNotifyV3Result;
@@ -24,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * @author 刘斌
@@ -37,6 +39,50 @@ public class WxPay implements WxPayI {
 
     private static final Gson GSON = new GsonBuilder().create();
 
+    @Override
+    public WxPayConfig getConfig() {
+        return wxPayService.getConfig();
+    }
+
+    @Override
+    public void setConfig(WxPayConfig config) {
+        wxPayService.setConfig(config);
+    }
+
+    @Override
+    public void addConfig(String mchId, WxPayConfig wxPayConfig) {
+        wxPayService.addConfig(mchId, wxPayConfig);
+    }
+
+    @Override
+    public void removeConfig(String mchId) {
+        wxPayService.removeConfig(mchId);
+    }
+
+    @Override
+    public void setMultiConfig(Map<String, WxPayConfig> wxPayConfigMap) {
+        wxPayService.setMultiConfig(wxPayConfigMap);
+    }
+
+    @Override
+    public void setMultiConfig(Map<String, WxPayConfig> wxPayConfigMap, String defaultMchId) {
+        wxPayService.setMultiConfig(wxPayConfigMap, defaultMchId);
+    }
+
+    @Override
+    public boolean switchover(String mchId) {
+        return wxPayService.switchover(mchId);
+    }
+
+    @Override
+    public boolean switchoverTo(String mchId) throws PayException {
+        try {
+            wxPayService.switchoverTo(mchId);
+            return true;
+        } catch (Exception e) {
+            throw new PayException(e.getMessage());
+        }
+    }
 
     @Override
     public String nativePay(String sn, BigDecimal amount, String subject) throws PayException {

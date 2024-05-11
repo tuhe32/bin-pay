@@ -1,13 +1,14 @@
 package io.github.tuhe32.bin.pay;
 
-import io.github.tuhe32.bin.pay.common.exception.PayException;
-import io.github.tuhe32.bin.pay.wx.WxPayI;
 import com.github.binarywang.wxpay.bean.notify.WxPayNotifyV3Result;
 import com.github.binarywang.wxpay.bean.result.WxPayOrderQueryV3Result;
 import com.github.binarywang.wxpay.bean.result.WxPayRefundV3Result;
 import com.github.binarywang.wxpay.config.WxPayConfig;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
+import io.github.tuhe32.bin.pay.common.exception.PayException;
+import io.github.tuhe32.bin.pay.wx.WxPay;
+import io.github.tuhe32.bin.pay.wx.WxPayI;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -25,18 +26,39 @@ import java.util.stream.Collectors;
 @Slf4j
 public class WechatTest {
 
-    private WxPayService wxPayService;
-    private WxPayI wxPayI;
+    private static final WxPayI wxPay;
+
+    static {
+        wxPay = init();
+    }
 
     public static void main(String[] args) {
 
     }
 
+    public static WxPayI init() {
+        WxPayService payService = new WxPayServiceImpl();
+        payService.setConfig(createNewConfig());
+        return new WxPay(payService);
+    }
+
+    private static WxPayConfig createNewConfig() {
+        WxPayConfig config = new WxPayConfig();
+        // 以下参数必填
+        config.setAppId("appId");
+        config.setMchId("mchId");
+        config.setApiV3Key("apiV3Key");
+        config.setPrivateKeyPath("privateKeyPath");
+        config.setPrivateCertPath("privateCertPath");
+        config.setNotifyUrl("notifyUrl");
+        return config;
+    }
+
     public void testPagePay() {
         try {
             // 如果只有一个mchId，可以不用切换
-            wxPayService.switchoverTo("mchId");
-            String pageRedirectionData = wxPayI.nativePay("sn", BigDecimal.valueOf(0.01), "测试支付");
+            wxPay.switchoverTo("mchId");
+            String codeUrl = wxPay.nativePay("sn", BigDecimal.valueOf(0.01), "测试支付");
             // 没有异常即代表-支付成功
             log.info("支付成功");
         } catch (PayException e) {
@@ -48,8 +70,8 @@ public class WechatTest {
     public void testQuery() {
         try {
             // 如果只有一个mchId，可以不用切换
-            wxPayService.switchoverTo("mchId");
-            WxPayOrderQueryV3Result query = wxPayI.query("sn");
+            wxPay.switchoverTo("mchId");
+            WxPayOrderQueryV3Result query = wxPay.query("sn");
             // 没有异常即代表-查询成功
             log.info("查询成功");
         } catch (PayException e) {
@@ -61,8 +83,8 @@ public class WechatTest {
     public void testRefund() {
         try {
             // 如果只有一个mchId，可以不用切换
-            wxPayService.switchoverTo("mchId");
-            WxPayRefundV3Result response = wxPayI.refund("sn", BigDecimal.valueOf(0.01), "outRequestNo");
+            wxPay.switchoverTo("mchId");
+            WxPayRefundV3Result response = wxPay.refund("sn", BigDecimal.valueOf(0.01), "outRequestNo");
             // 没有异常即代表-退款成功
             log.info("退款成功");
         } catch (PayException e) {
@@ -73,7 +95,7 @@ public class WechatTest {
 
     public void testNotify(HttpServletRequest request) {
         try {
-            WxPayNotifyV3Result.DecryptNotifyResult notify = wxPayI.notify("notifyData");
+            WxPayNotifyV3Result.DecryptNotifyResult notify = wxPay.notify("notifyData");
             // 没有异常即代表-异步回调成功
             log.info("异步回调成功");
         } catch (PayException e) {
@@ -118,11 +140,11 @@ public class WechatTest {
      * 进行商户配置切换
      */
     public void switchoverConfig(String mchId, PayChannelWechat payChannelWechat) {
-        if (!wxPayService.switchover(mchId)) {
+        if (!wxPay.switchover(mchId)) {
             log.info("未找到对应mchId=[{}]的配置，重新查询数据库", mchId);
             if (payChannelWechat != null) {
                 log.info("从数据库加载对应mchId=[{}]的配置", mchId);
-                wxPayService.addConfig(payChannelWechat.getMchid(), createNewConfig(payChannelWechat));
+                wxPay.addConfig(payChannelWechat.getMchid(), createNewConfig(payChannelWechat));
             } else {
                 throw new RuntimeException("未找到对应mchId=[{}]的配置");
             }

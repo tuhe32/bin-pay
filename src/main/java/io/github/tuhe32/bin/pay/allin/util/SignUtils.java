@@ -144,7 +144,7 @@ public class SignUtils {
             sb.append(key).append("=").append(value)
                     .append("&");
         }
-        if (!sb.isEmpty()) {
+        if (sb.length() > 0) {
             sb.deleteCharAt(sb.length() - 1);
         }
         return sb.toString();
@@ -198,7 +198,7 @@ public class SignUtils {
             sb.append(key).append("=").append(URLEncoder.encode(value, StandardCharsets.UTF_8))
                     .append("&");
         }
-        if (!sb.isEmpty()) {
+        if (sb.length() > 0) {
             sb.deleteCharAt(sb.length() - 1);
         }
         return sb.toString();
