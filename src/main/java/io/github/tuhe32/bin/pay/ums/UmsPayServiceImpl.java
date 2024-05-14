@@ -1,16 +1,17 @@
 package io.github.tuhe32.bin.pay.ums;
 
-import io.github.tuhe32.bin.pay.common.BasePayServiceImpl;
-import io.github.tuhe32.bin.pay.common.exception.PayException;
-import io.github.tuhe32.bin.pay.common.utils.PayUtils;
-import io.github.tuhe32.bin.pay.ums.config.UmsPayConfig;
-import io.github.tuhe32.bin.pay.ums.domain.*;
-import io.github.tuhe32.bin.pay.ums.util.UmsSignUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import io.github.tuhe32.bin.pay.common.BasePayServiceImpl;
+import io.github.tuhe32.bin.pay.common.exception.PayException;
+import io.github.tuhe32.bin.pay.common.utils.PayUtils;
+import io.github.tuhe32.bin.pay.ums.config.UmsPayConfig;
+import io.github.tuhe32.bin.pay.ums.config.UmsPayConfigHolder;
+import io.github.tuhe32.bin.pay.ums.domain.*;
+import io.github.tuhe32.bin.pay.ums.util.UmsSignUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
@@ -37,6 +38,10 @@ import static io.github.tuhe32.bin.pay.ums.constants.UmsPayConstants.*;
 public class UmsPayServiceImpl extends BasePayServiceImpl implements UmsPayService {
 
     private static final Gson GSON = new GsonBuilder().create();
+
+    public UmsPayServiceImpl() {
+        super.setConfigHolder(new UmsPayConfigHolder());
+    }
 
     /**
      * 小程序支付
