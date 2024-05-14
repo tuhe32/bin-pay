@@ -23,6 +23,8 @@ public class AllinPayConfig extends BasePayConfig {
 
     private String signType;
 
+    private String subAppId;
+
     private String notifyUrl;
 
     private String domainUrl;

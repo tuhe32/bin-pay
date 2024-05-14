@@ -1,6 +1,10 @@
 package io.github.tuhe32.bin.pay.common.utils;
 
 import io.github.tuhe32.bin.pay.allin.constants.AuthCodeConstant;
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author 刘斌
@@ -58,6 +62,25 @@ public class PayUtils {
             }
         }
         throw new RuntimeException("支付授权码格式错误，【授权码】：" + authCode);
+    }
+
+    /**
+     * 获取HttpServletRequest里面的参数
+     */
+    public static Map<String, String> getRequestMap(HttpServletRequest request) {
+        Map<String, String> params = new HashMap<>();
+        Map<String, String[]> requestParams = request.getParameterMap();
+        for (String name : requestParams.keySet()) {
+            String[] values = requestParams.get(name);
+            String valueStr = "";
+            for (int i = 0; i < values.length; i++) {
+                valueStr = (i == values.length - 1) ? valueStr + values[i] : valueStr + values[i] + ",";
+            }
+            //乱码解决，这段代码在出现乱码时使用。
+            //valueStr = new String(valueStr.getBytes("ISO-8859-1"), "utf-8");
+            params.put(name, valueStr);
+        }
+        return params;
     }
 
 }

@@ -19,6 +19,7 @@ import io.github.tuhe32.bin.pay.ali.domain.AliPayQuery;
 import io.github.tuhe32.bin.pay.ali.enums.TradeStatus;
 import io.github.tuhe32.bin.pay.common.exception.CheckedFunction;
 import io.github.tuhe32.bin.pay.common.exception.PayException;
+import io.github.tuhe32.bin.pay.common.utils.PayUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
@@ -428,33 +429,15 @@ public class AliPayServiceImpl implements AliPayService {
      */
     @Override
     public AliPayNotify notify(HttpServletRequest request) throws PayException {
-        Map<String, String> requestMap = this.getRequestMap(request);
+        Map<String, String> requestMap = PayUtils.getRequestMap(request);
         this.switchoverTo(requestMap.get("app_id"));
         this.checkSignV1(requestMap);
         if (!TradeStatus.SUCCESS.getStr().equals(requestMap.get("trade_status"))) {
             log.error("支付失败【请求参数】：{}", writeJson(requestMap, false));
             throw new PayException(requestMap.get("trade_status"), "支付失败");
         }
+        log.error("支付成功【请求参数】：{}", writeJson(requestMap, false));
         return AliPayNotify.of(requestMap);
-    }
-
-    /**
-     * 获取HttpServletRequest里面的参数
-     */
-    public Map<String, String> getRequestMap(HttpServletRequest request) {
-        Map<String, String> params = new HashMap<>();
-        Map<String, String[]> requestParams = request.getParameterMap();
-        for (String name : requestParams.keySet()) {
-            String[] values = requestParams.get(name);
-            String valueStr = "";
-            for (int i = 0; i < values.length; i++) {
-                valueStr = (i == values.length - 1) ? valueStr + values[i] : valueStr + values[i] + ",";
-            }
-            //乱码解决，这段代码在出现乱码时使用。
-            //valueStr = new String(valueStr.getBytes("ISO-8859-1"), "utf-8");
-            params.put(name, valueStr);
-        }
-        return params;
     }
 
     /**

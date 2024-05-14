@@ -11,6 +11,7 @@ import com.github.binarywang.wxpay.bean.request.BaseWxPayRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import io.github.tuhe32.bin.pay.common.utils.PayUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -84,8 +85,12 @@ public class AllinPayServiceImpl extends BasePayServiceImpl implements AllinPayS
         if (request.getSubOpenId() != null) {
             params.put("acct", request.getSubOpenId());
         }
-        if (request.getSubAppId() != null) {
-            params.put("sub_appid", request.getSubAppId());
+        if ("W06".equals(request.getPayType()) || "W02".equals(request.getPayType()) || "W03".equals(request.getPayType())) {
+            if (StringUtils.isNotBlank(request.getSubAppId())) {
+                params.put("sub_appid", request.getSubAppId());
+            } else {
+                params.put("sub_appid", ((AllinPayConfig) getConfig()).getSubAppId());
+            }
         }
         if (request.getRemark() != null) {
             params.put("remark", request.getRemark());
@@ -178,7 +183,7 @@ public class AllinPayServiceImpl extends BasePayServiceImpl implements AllinPayS
      */
     @Override
     public AllinPayNotify notify(HttpServletRequest request) throws PayException {
-        Map<String, String> requestMap = this.getRequestMap(request);
+        Map<String, String> requestMap = PayUtils.getRequestMap(request);
         SignUtils.validSign(requestMap);
         if (!STATUS_SUCCESS.equals(requestMap.get(TRX_STATUS))) {
             log.error("支付失败【请求参数】：{}", GSON.toJson(requestMap));
@@ -335,25 +340,6 @@ public class AllinPayServiceImpl extends BasePayServiceImpl implements AllinPayS
             log.error("通联{}调用失败【请求数据】：{}\n【原因】：{}", operate, GSON.toJson(params), e.getMessage());
             throw (e instanceof PayException) ? (PayException) e : new PayException(e.getMessage(), e);
         }
-    }
-
-    /**
-     * 获取HttpServletRequest里面的参数
-     */
-    public Map<String, String> getRequestMap(HttpServletRequest request) {
-        Map<String, String> params = new HashMap<>();
-        Map<String, String[]> requestParams = request.getParameterMap();
-        for (String name : requestParams.keySet()) {
-            String[] values = requestParams.get(name);
-            String valueStr = "";
-            for (int i = 0; i < values.length; i++) {
-                valueStr = (i == values.length - 1) ? valueStr + values[i] : valueStr + values[i] + ",";
-            }
-            //乱码解决，这段代码在出现乱码时使用。
-            //valueStr = new String(valueStr.getBytes("ISO-8859-1"), "utf-8");
-            params.put(name, valueStr);
-        }
-        return params;
     }
 
     private static boolean isSameDay(LocalDateTime date1, LocalDateTime date2) {

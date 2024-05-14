@@ -133,3 +133,39 @@ public class PayTest {
 }
 ```
 
+- 银商使用示例
+
+```java
+@SpringBootTest
+public class PayTest {
+
+    @Resource
+    private UmsPayService umsPayService;
+
+    @Bean
+    public UmsPayService umsPayService() {
+        UmsPayService umsPayService = new UmsPayServiceImpl();
+        UmsPayConfig umsPayConfig = new UmsPayConfig("appId", "appKey", "mid", "tid", "sysCodePrefix", "md5Key");
+        umsPayConfig.setNotifyUrl("notifyUrl");
+        umsPayConfig.setSubAppId("subAppId");
+        umsPayService.setConfig(umsPayConfig);
+        return umsPayService;
+    }
+
+    @Test
+    public void test() {
+        try {
+            UmsPayMiniResponse response = umsPayService.miniPay(new UmsPayMiniRequest()
+                    .setTotalAmount(BigDecimal.valueOf(0.01))
+                    .setSubOpenId("subOpenId"));
+            // 没有异常即代表-支付成功
+            log.info("支付成功");
+        } catch (PayException e) {
+            // 处理支付失败
+            log.error("支付失败：{}", e.getMessage());
+        }
+    }
+
+}
+```
+
