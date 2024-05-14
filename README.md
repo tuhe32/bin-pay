@@ -1,6 +1,6 @@
 # 工程简介
 
-大幅简化支付功能接口，大大便利化支付功能开发。封装了支付宝，微信，通联等支付接口，支持H5，APP，小程序，PC网页，微信小程序等各种支付方式。
+友好的接口封装，完善的日志记录，大幅简化的支付开发，避免了支付功能开发中常常踩到的坑。目前已覆盖了微信、支付宝，通联、银商等交易渠道的小程序、H5，APP，PC网页，扫码付等各种常用的场景。
 
 # 使用说明
 
@@ -16,9 +16,9 @@
   
 # 特点
 - 支持多账户，多租户
-- 简化接口使用，最多三行代码
-- 支持多种支付，极简化开发
-- 封装支付接口，支持H5，APP，小程序，PC网页，扫码枪等
+- 友好的接口封装，最多三行代码
+- 支持多种支付渠道
+- 封装多种交易场景的支付接口，如H5，APP，小程序，PC网页，扫码枪等
 
 # 基本使用
 - 通联使用示例
@@ -41,10 +41,9 @@ public class PayTest {
     @Test
     public void test() {
         try {
-            AllinPayUnitOrderRequest request = new AllinPayUnitOrderRequest()
-                    .setReqSn("sn").setTrxAmt(BigDecimal.valueOf(0.01)).setBody("测试支付");
-            request.setCusId("newCusId");
-            String payInfo = allinPayService.unitOrderPay(request);
+            allinPayService.switchoverTo("cusId");
+            String payInfo = allinPayService.unitOrderPay(new AllinPayUnitOrderRequest()
+                    .setReqSn("sn").setTrxAmt(BigDecimal.valueOf(0.01)).setPayType("W02").setSubOpenId("openId"));
             // 没有异常即代表-支付成功
             log.info("支付成功");
         } catch (PayException e) {

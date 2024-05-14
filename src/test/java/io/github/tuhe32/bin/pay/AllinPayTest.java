@@ -52,7 +52,7 @@ public class AllinPayTest {
     public static void testUnitOrderPay() {
         try {
             // 如果只有一个支付宝appId，可以不用切换
-            allinPayService.switchoverTo("appId");
+            allinPayService.switchoverTo("cusId");
             String payInfo = allinPayService.unitOrderPay(new AllinPayUnitOrderRequest()
                     .setReqSn("sn").setTrxAmt(BigDecimal.valueOf(0.01)).setPayType("W02").setSubOpenId("openId"));
             // 没有异常即代表-支付成功
