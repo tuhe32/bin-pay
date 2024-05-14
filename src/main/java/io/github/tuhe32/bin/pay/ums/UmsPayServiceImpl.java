@@ -96,7 +96,7 @@ public class UmsPayServiceImpl extends BasePayServiceImpl implements UmsPayServi
     @Override
     public String h5Pay(UmsPayMiniRequest request) throws PayException {
         request.setInstMid("YUEDANDEFAULT");
-        UmsPayConfig config = (UmsPayConfig) getConfig();
+        UmsPayConfig config = (UmsPayConfig) this.getConfig();
         if (StringUtils.isBlank(request.getMerOrderId())) {
             request.setMerOrderId(getMerOrderId(config.getSysCodePrefix()));
         }
@@ -118,7 +118,7 @@ public class UmsPayServiceImpl extends BasePayServiceImpl implements UmsPayServi
                 request.setSubOrders(GSON.toJson(subOrders));
             }
         }
-        buildBaseParams(request, config);
+        this.buildBaseParams(request, config);
         String json = GSON.toJson(request);
         Map<String, String> map = new HashMap<>(10);
         try {
@@ -165,12 +165,12 @@ public class UmsPayServiceImpl extends BasePayServiceImpl implements UmsPayServi
         } else if (PAY_TYPE_UACPAY.equals(request.getPayType())) {
             serverUrl = JS_ACP_ORDER;
         }
-        Map<String, String> responseMap = this.nativePay(request, serverUrl, "H5支付");
+        Map<String, String> responseMap = this.nativePay(request, serverUrl, "JS支付");
         return UmsPayJsResponse.of(responseMap);
     }
 
     public Map<String, String> nativePay(BaseUmsNativePayRequest request, String serverUrl, String operate) throws PayException {
-        UmsPayConfig config = (UmsPayConfig) getConfig();
+        UmsPayConfig config = (UmsPayConfig) this.getConfig();
         if (StringUtils.isBlank(request.getMerOrderId())) {
             request.setMerOrderId(getMerOrderId(config.getSysCodePrefix()));
         }
@@ -192,7 +192,7 @@ public class UmsPayServiceImpl extends BasePayServiceImpl implements UmsPayServi
                 request.setSubOrders(GSON.toJson(subOrders));
             }
         }
-        buildBaseParams(request, config);
+        this.buildBaseParams(request, config);
         return this.postUms(serverUrl, GSON.toJson(request), config, operate);
     }
 
@@ -205,7 +205,7 @@ public class UmsPayServiceImpl extends BasePayServiceImpl implements UmsPayServi
      */
     @Override
     public UmsPayScanQrPayResponse scanQrPay(UmsPayScanQrPayRequest request) throws PayException {
-        UmsPayConfig config = (UmsPayConfig) getConfig();
+        UmsPayConfig config = (UmsPayConfig) this.getConfig();
         if (StringUtils.isBlank(request.getMerchantOrderId())) {
             request.setMerchantOrderId(getMerOrderId(config.getSysCodePrefix()));
         }
@@ -269,9 +269,9 @@ public class UmsPayServiceImpl extends BasePayServiceImpl implements UmsPayServi
     }
 
     public UmsPayQueryResponse query(UmsPayQueryRequest request, String serverUrl) throws PayException {
-        UmsPayConfig config = (UmsPayConfig) getConfig();
+        UmsPayConfig config = (UmsPayConfig) this.getConfig();
         request.setRequestTimestamp(UmsSignUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss"));
-        buildMidParams(request, config);
+        this.buildMidParams(request, config);
         Map<String, String> responseMap = this.postUms(serverUrl, GSON.toJson(request), config, "交易查询");
         if (!STATUS_SUCCESS.equals(responseMap.get("status"))) {
             log.error("银商查询交易支付失败【请求参数】：{}", GSON.toJson(responseMap));
@@ -307,7 +307,7 @@ public class UmsPayServiceImpl extends BasePayServiceImpl implements UmsPayServi
     }
 
     public UmsPayRefundResponse refund(UmsPayRefundRequest request, String operate) throws PayException {
-        UmsPayConfig config = (UmsPayConfig) getConfig();
+        UmsPayConfig config = (UmsPayConfig) this.getConfig();
         request.setRequestTimestamp(UmsSignUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss"));
         if (config.getDivisionFlag() != null && config.getDivisionFlag()) {
             request.setPlatformAmount(request.getPlatformAmount() == null ? 0 : request.getPlatformAmount());
@@ -321,7 +321,7 @@ public class UmsPayServiceImpl extends BasePayServiceImpl implements UmsPayServi
                 request.setSubOrders(GSON.toJson(subOrders));
             }
         }
-        buildMidParams(request, config);
+        this.buildMidParams(request, config);
         Map<String, String> responseMap = this.postUms(REFUND_ORDER, GSON.toJson(request), config, operate);
         if (!CODE_SUCCESS.equals(responseMap.get("refundStatus"))) {
             log.error("银商退款失败【请求参数】：{}", GSON.toJson(responseMap));
@@ -339,7 +339,7 @@ public class UmsPayServiceImpl extends BasePayServiceImpl implements UmsPayServi
      */
     @Override
     public UmsPayScanQrRefundResponse scanQrRefund(UmsPayScanQrRefundRequest request) throws PayException {
-        UmsPayConfig config = (UmsPayConfig) getConfig();
+        UmsPayConfig config = (UmsPayConfig) this.getConfig();
         if (config.getDivisionFlag() != null && config.getDivisionFlag()) {
             request.setMerchantCode(config.getParentMid());
         } else {
@@ -361,7 +361,7 @@ public class UmsPayServiceImpl extends BasePayServiceImpl implements UmsPayServi
     public UmsPayNotify notify(HttpServletRequest request) throws PayException {
         Map<String, String> requestMap = PayUtils.getRequestMap(request);
         this.switchoverTo(requestMap.get("mid"));
-        UmsPayConfig config = (UmsPayConfig) getConfig();
+        UmsPayConfig config = (UmsPayConfig) this.getConfig();
         UmsSignUtils.validSign(requestMap, config.getMd5Key());
         if (!STATUS_SUCCESS.equals(requestMap.get("status")) || !STATUS_CLOSED.equals(requestMap.get("status"))) {
             log.error("回调显示交易失败【请求参数】：{}", GSON.toJson(requestMap));

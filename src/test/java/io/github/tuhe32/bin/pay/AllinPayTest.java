@@ -53,10 +53,8 @@ public class AllinPayTest {
         try {
             // 如果只有一个支付宝appId，可以不用切换
             allinPayService.switchoverTo("appId");
-            AllinPayUnitOrderRequest request = new AllinPayUnitOrderRequest()
-                    .setReqSn("sn").setTrxAmt(BigDecimal.valueOf(0.01)).setBody("测试支付");
-            request.setCusId("cusId");
-            String payInfo = allinPayService.unitOrderPay(request);
+            String payInfo = allinPayService.unitOrderPay(new AllinPayUnitOrderRequest()
+                    .setReqSn("sn").setTrxAmt(BigDecimal.valueOf(0.01)).setPayType("W02").setSubOpenId("openId"));
             // 没有异常即代表-支付成功
             log.info("支付成功");
         } catch (PayException e) {
