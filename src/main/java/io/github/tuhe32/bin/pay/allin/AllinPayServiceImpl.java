@@ -161,7 +161,7 @@ public class AllinPayServiceImpl extends BasePayServiceImpl implements AllinPayS
         Map<String, String> params = new HashMap<>(24);
         params.put("reqsn", request.getReqSn());
         params.put("version", "11");
-        String domainUrl = this.buildBaseParams(params, request);
+        String domainUrl = this.buildBaseNeedParams(params, request, null);
         Map<String, String> responseMap = this.postAllin(domainUrl + QUERY_ORDER, params, "统一查询");
         if (STATUS_SUCCESS.equals(responseMap.get(TRX_STATUS))) {
             log.info("查询成功【请求参数】：{}", GSON.toJson(params));
@@ -231,7 +231,7 @@ public class AllinPayServiceImpl extends BasePayServiceImpl implements AllinPayS
         params.put("oldtrxid", request.getOldTrxId());
         params.put("remark", request.getRemark());
         params.put("version", "11");
-        String domainUrl = this.buildBaseParams(params, request);
+        String domainUrl = this.buildBaseNeedParams(params, request, null);
         Map<String, String> responseMap = this.postAllin(domainUrl + REFUND_ORDER, params, "统一退款");
         if (!STATUS_SUCCESS.equals(responseMap.get(TRX_STATUS))) {
             log.error("退款失败【请求参数】：{}", GSON.toJson(params));
@@ -255,7 +255,7 @@ public class AllinPayServiceImpl extends BasePayServiceImpl implements AllinPayS
         params.put("oldreqsn", request.getOldReqSn());
         params.put("oldtrxid", request.getOldTrxId());
         params.put("version", "11");
-        String domainUrl = this.buildBaseParams(params, request);
+        String domainUrl = this.buildBaseNeedParams(params, request, null);
         Map<String, String> responseMap = this.postAllin(domainUrl + CANCEL_ORDER, params, "统一撤销");
         if (!STATUS_SUCCESS.equals(responseMap.get(TRX_STATUS))) {
             log.error("撤销交易失败【请求参数】：{}", GSON.toJson(params));
@@ -282,12 +282,15 @@ public class AllinPayServiceImpl extends BasePayServiceImpl implements AllinPayS
         params.put("termstate", request.getTermState());
         params.put("termaddress", request.getTermAddress());
         params.put("version", "12");
-        String domainUrl = this.buildBaseParams(params, request);
+        String domainUrl = this.buildBaseNeedParams(params, request, null);
         this.postAllin(domainUrl + ADD_TERM, params, "终端信息采集");
     }
 
-    public String buildBaseParams(Map<String, String> params, BaseAllinPayRequest baseRequest) throws PayException {
-        AllinPayConfig config = (AllinPayConfig) getConfig();
+    public String buildBaseNeedParams(Map<String, String> params, BaseAllinPayRequest baseRequest, AllinPayConfig config) throws PayException {
+        boolean isNeedSign = config == null;
+        if (isNeedSign) {
+            config = (AllinPayConfig) getConfig();
+        }
         if (StringUtils.isNotBlank(baseRequest.getOrgId())) {
             params.put("orgid", baseRequest.getOrgId());
         } else if (config.getOrgId() != null) {
@@ -303,6 +306,19 @@ public class AllinPayServiceImpl extends BasePayServiceImpl implements AllinPayS
         } else {
             params.put("cusid", config.getCusId());
         }
+        params.put("signtype", config.getSignType());
+        params.put("randomstr", SignUtils.randomCode(8));
+        if (isNeedSign) {
+            params.put("sign", SignUtils.sign(params, config.getAppKey(), config.getSignType()));
+            return config.getDomainUrl();
+        } else {
+            return "";
+        }
+    }
+
+    public String buildBaseParams(Map<String, String> params, BaseAllinPayRequest baseRequest) throws PayException {
+        AllinPayConfig config = (AllinPayConfig) getConfig();
+        this.buildBaseNeedParams(params, baseRequest, config);
         if (StringUtils.isNotBlank(baseRequest.getSubbranch())) {
             params.put("subbranch", baseRequest.getSubbranch());
         } else if (config.getSubbranch() != null) {
@@ -316,8 +332,6 @@ public class AllinPayServiceImpl extends BasePayServiceImpl implements AllinPayS
         if (baseRequest.getExtraData() != null) {
             params.putAll(baseRequest.getExtraData());
         }
-        params.put("signtype", config.getSignType());
-        params.put("randomstr", SignUtils.randomCode(8));
         params.put("sign", SignUtils.sign(params, config.getAppKey(), config.getSignType()));
         return config.getDomainUrl();
     }
