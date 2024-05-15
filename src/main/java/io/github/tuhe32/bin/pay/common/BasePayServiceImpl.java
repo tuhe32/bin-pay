@@ -19,7 +19,7 @@ public abstract class BasePayServiceImpl {
 
     public void setConfigHolder(BasePayConfigHolderI configHolder) {
         this.configHolder = configHolder;
-        configMap = new HashMap<>(6);
+        this.configMap = new HashMap<>(6);
     }
 
     public BasePayConfig getConfig() {
@@ -27,7 +27,7 @@ public abstract class BasePayServiceImpl {
             // 只有一个商户号，直接返回其配置即可
             return this.configMap.values().iterator().next();
         }
-        return this.configMap.get(configHolder.get());
+        return this.configMap.get(this.configHolder.get());
     }
 
     public void setConfig(BasePayConfig config) {
@@ -40,7 +40,7 @@ public abstract class BasePayServiceImpl {
             if (this.configMap == null) {
                 this.setConfig(basePayConfig);
             } else {
-                configHolder.set(cusId);
+                this.configHolder.set(cusId);
                 this.configMap.put(cusId, basePayConfig);
             }
         }
@@ -53,10 +53,10 @@ public abstract class BasePayServiceImpl {
                 log.warn("已删除最后一个商户号配置：{}，须立即使用setConfig或setMultiConfig添加配置", cusId);
                 return;
             }
-            if (configHolder.get().equals(cusId)) {
+            if (this.configHolder.get().equals(cusId)) {
                 this.configMap.remove(cusId);
                 final String defaultCusId = this.configMap.keySet().iterator().next();
-                configHolder.set(defaultCusId);
+                this.configHolder.set(defaultCusId);
                 log.warn("已删除默认商户号配置，商户号【{}】被设为默认配置", defaultCusId);
                 return;
             }
@@ -70,12 +70,12 @@ public abstract class BasePayServiceImpl {
 
     public void setMultiConfig(Map<String, BasePayConfig> basePayConfig, String defaultCusId) {
         this.configMap = new HashMap<>(basePayConfig);
-        configHolder.set(defaultCusId);
+        this.configHolder.set(defaultCusId);
     }
 
     public boolean switchover(String cusId) {
         if (this.configMap.containsKey(cusId)) {
-            configHolder.set(cusId);
+            this.configHolder.set(cusId);
             return true;
         }
         log.error("无法找到对应【{}】的商户号配置信息，请核实！", cusId);
@@ -84,7 +84,7 @@ public abstract class BasePayServiceImpl {
 
     public boolean switchoverTo(String cusId) throws PayException {
         if (this.configMap.containsKey(cusId)) {
-            configHolder.set(cusId);
+            this.configHolder.set(cusId);
             return true;
         }
         throw new PayException(String.format("无法找到对应【%s】的商户号配置信息，请核实！", cusId));
