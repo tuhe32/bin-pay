@@ -29,6 +29,7 @@ public class WechatTest {
         wxPayI = init();
     }
 
+    // 正常不能通过静态方式初始化。需要创建一个WxPayI的bean，注入到容器中
     public static WxPayI init() {
         WxPayService payService = new WxPayServiceImpl();
         payService.setConfig(createNewConfig());

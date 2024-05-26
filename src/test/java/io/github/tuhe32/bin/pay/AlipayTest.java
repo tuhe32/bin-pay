@@ -29,6 +29,7 @@ public class AlipayTest {
         aliPayService = initAlipayConfig();
     }
 
+    // 正常不能通过静态方式初始化。需要创建一个AliPayService的bean，注入到容器中
     public static AliPayService initAlipayConfig() {
         AliPayService aliPayService = new AliPayServiceImpl();
         AliPayConfig aliPayConfig = new AliPayConfig("app_id", "your private_key", "alipay_public_key");

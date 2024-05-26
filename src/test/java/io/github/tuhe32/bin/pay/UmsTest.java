@@ -25,6 +25,7 @@ public class UmsTest {
         umsPayService = init();
     }
 
+    // 正常不能通过静态方式初始化。需要创建一个UmsPayService的bean，注入到容器中
     public static UmsPayService init() {
         UmsPayService umsPayService = new UmsPayServiceImpl();
         UmsPayConfig umsPayConfig = new UmsPayConfig("appId", "appKey", "mid", "tid", "sysCodePrefix", "md5Key");

@@ -26,6 +26,7 @@ public class AllinPayTest {
         allinPayService = init();
     }
 
+    // 正常不能通过静态方式初始化。需要创建一个AllinPayService的bean，注入到容器中
     public static AllinPayService init() {
         AllinPayService allinPayService = new AllinPayServiceImpl();
         AllinPayConfig allinPayConfig = new AllinPayConfig("app_id", "your private_key", "alipay_public_key");
