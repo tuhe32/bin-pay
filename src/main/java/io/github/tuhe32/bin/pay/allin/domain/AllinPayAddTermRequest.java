@@ -30,20 +30,14 @@ public class AllinPayAddTermRequest extends BaseAllinPayRequest implements Seria
      * 设备类型
      * 是否必填：是
      * 长度：2
+     * 默认：11
      */
     private String deviceType;
-
-    /**
-     * 终端序列号
-     * 是否必填：否
-     */
-    private String termSn;
 
     /**
      * 操作类型
      * 是否必填：是
      * 长度：2
-     * 默认：11
      */
     private String operation;
 
@@ -62,6 +56,12 @@ public class AllinPayAddTermRequest extends BaseAllinPayRequest implements Seria
      * 错误示例：上海市-上海市-浦东新区-上海市浦东新区五星路101号5楼
      */
     private String termAddress;
+
+    /**
+     * 终端序列号
+     * 是否必填：否
+     */
+    private String termSn;
 
 
 }

@@ -29,22 +29,22 @@ public class UmsPayQueryRequest extends BaseUmsPayRequest implements Serializabl
     private String merOrderId;
 
     /**
-     * 机构商户号
-     * 是否必填：是
-     */
-    @SerializedName(value = "instMid")
-    private String instMid;
-
-    /**
      * 交易方式
-     * 是否必填：是
+     * 是否必填：否（APP支付的查询必填）
      * 微信：WXPAY，支付宝：ALIPAY, 云闪付：UACPAY
      */
     private transient String payType;
 
     /**
+     * 机构商户号
+     * 是否必填：不填（默认生成）
+     */
+    @SerializedName(value = "instMid")
+    private String instMid;
+
+    /**
      * 请求时间戳
-     * 是否必填：不填
+     * 是否必填：不填（默认生成）
      * 格式yyyy-MM-dd HH:mm:ss
      */
     @SerializedName(value = "requestTimestamp")

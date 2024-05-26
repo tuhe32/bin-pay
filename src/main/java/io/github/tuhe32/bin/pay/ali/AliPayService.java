@@ -136,7 +136,7 @@ public interface AliPayService {
      * @param sn 平台订单号
      * @param amount 用户支付金额(单位: 元)
      * @param subject 商品标题
-     * @return com.alipay.api.response.AlipayTradeWapPayResponse
+     * @return orderStr｜签名字符串
      * @throws PayException 支付异常
      */
     String appPay(String sn, BigDecimal amount, String subject) throws PayException;

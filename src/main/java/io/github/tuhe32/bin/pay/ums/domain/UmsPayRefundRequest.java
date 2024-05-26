@@ -47,13 +47,6 @@ public class UmsPayRefundRequest extends BaseUmsPayRequest implements Serializab
     private String refundOrderId;
 
     /**
-     * 交易方式
-     * 是否必填：是
-     * 微信：WXPAY，支付宝：ALIPAY, 云闪付：UACPAY
-     */
-    private transient String payType;
-
-    /**
      * 平台商户分账金额
      * 是否必填：否
      */

@@ -38,14 +38,6 @@ public class AllinPayScanQrPayRequest extends BaseAllinPayRequest implements Ser
     private BigDecimal trxAmt;
 
     /**
-     * 订单标题
-     * 是否必填：否
-     * 最大取值：100（注：utf8下，一个中文字符是3个字节）
-     */
-    @SerializedName(value = "body")
-    private String body;
-
-    /**
      * 扫码支付授权码
      * 是否必填：是
      */
@@ -54,8 +46,17 @@ public class AllinPayScanQrPayRequest extends BaseAllinPayRequest implements Ser
 
     /**
      * 终端信息
+     * 是否必填：是
      */
     private AllinPayTermInfo termInfo;
+
+    /**
+     * 订单标题
+     * 是否必填：否
+     * 最大取值：100（注：utf8下，一个中文字符是3个字节）
+     */
+    @SerializedName(value = "body")
+    private String body;
 
     /**
      * 备注
@@ -82,33 +83,39 @@ public class AllinPayScanQrPayRequest extends BaseAllinPayRequest implements Ser
 
         /**
          * 终端号
+         * 是否必填：是
          */
         @SerializedName("termno")
         private String termNo;
         /**
          * 设备类型
+         * 是否必填：否
          */
         @SerializedName("devicetype")
         private String deviceType = "11";
         /**
-         * 终端序列号
-         */
-        @SerializedName("termsn")
-        private String termSn;
-        /**
          * 经度
+         * 是否必填：是
          * 格式：1位正负号+3位整数 +1位小数点 +5位小数
          */
         @SerializedName("longitude")
         private String longitude;
         /**
          * 纬度
+         * 是否必填：是
          * 格式：1位正负号+2位整数+1位小数点 +6 位小数
          */
         @SerializedName("latitude")
         private String latitude;
         /**
+         * 终端序列号
+         * 是否必填：否
+         */
+        @SerializedName("termsn")
+        private String termSn;
+        /**
          * 终端IP
+         * 是否必填：否
          */
         @SerializedName("deviceip")
         private String deviceIp;

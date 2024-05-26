@@ -10,7 +10,7 @@
   <dependency>
     <groupId>io.github.tuhe32</groupId>
     <artifactId>bin-pay</artifactId>
-    <version>${最新版}</version>
+    <version>1.0.6</version>
   </dependency>
   ```
   
@@ -23,6 +23,7 @@
 # 基本使用
 - 通联使用示例
 
+具体Demo参考test下的AllinPayTest.java
 ```java
 @SpringBootTest
 public class PayTest {
@@ -56,6 +57,7 @@ public class PayTest {
 
 - 微信使用示例
 
+具体Demo参考test下的WechatTest.java
 ```java
 @SpringBootTest
 public class PayTest {
@@ -99,6 +101,8 @@ public class PayTest {
 ```
 
 - 支付宝使用示例
+
+具体Demo参考test下的AlipayTest.java
 ```java
 @SpringBootTest
 public class PayTest {
@@ -134,6 +138,7 @@ public class PayTest {
 
 - 银商使用示例
 
+具体Demo参考test下的UmsTest.java
 ```java
 @SpringBootTest
 public class PayTest {
@@ -167,4 +172,28 @@ public class PayTest {
 
 }
 ```
+
+### 不喜欢try-catch的可以用以下方式
+
+```java
+    public void testPay2() {
+        String orderSn = "订单号";
+        BigDecimal orderAmount = BigDecimal.ONE;
+        String subject = "测试支付";
+        // 不喜欢try-catch的可以用以下两种方式实现成功和失败，所有的方法都可以这样封装
+        PayBroker.broker(() -> wxPayI.nativePay(orderSn, orderAmount, subject), result -> {
+            System.out.println(result);
+        }, e -> {
+            log.error("查询失败：{}", e.getMessage());
+        });
+
+        PayOptional.of(() -> wxPayI.nativePay(orderSn, orderAmount, subject))
+                .success(result -> {
+                    System.out.println(result);
+                }).fail(e -> {
+                    log.error(e.getMessage());
+                }).get();
+    }
+```
+
 
