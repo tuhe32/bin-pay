@@ -74,6 +74,11 @@ public interface AliPayService {
     boolean switchoverTo(String appId) throws PayException;
 
     /**
+     * 清除在ThreadLocal中的配置数据
+     */
+    void clearConfigHolder();
+
+    /**
      * 电脑网站支付
      * @param sn 平台订单号
      * @param amount 用户支付金额(单位: 元)

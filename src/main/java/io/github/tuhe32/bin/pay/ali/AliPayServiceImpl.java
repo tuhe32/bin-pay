@@ -114,6 +114,11 @@ public class AliPayServiceImpl implements AliPayService {
     }
 
     @Override
+    public void clearConfigHolder() {
+        AliPayConfigHolder.remove();
+    }
+
+    @Override
     public String pagePay(String sn, BigDecimal amount, String subject) throws PayException {
         return this.pagePay(sn, amount, subject, null);
     }
@@ -432,6 +437,7 @@ public class AliPayServiceImpl implements AliPayService {
         Map<String, String> requestMap = PayUtils.getRequestMap(request);
         this.switchoverTo(requestMap.get("app_id"));
         this.checkSignV1(requestMap);
+        this.clearConfigHolder();
         if (!TradeStatus.SUCCESS.getStr().equals(requestMap.get("trade_status"))) {
             log.error("支付失败【请求参数】：{}", writeJson(requestMap, false));
             throw new PayException(requestMap.get("trade_status"), "支付失败");
@@ -461,6 +467,7 @@ public class AliPayServiceImpl implements AliPayService {
 
     private <T extends AlipayResponse, R extends AlipayRequest<T>> T postAlipay(CheckedFunction<R, T, AlipayApiException> function, R request) throws PayException {
         try {
+            this.clearConfigHolder();
             T response = function.apply(request);
             if (response.isSuccess()) {
                 log.info("支付宝调用成功【请求数据】：{}\n【响应数据】：{}", writeJson(request.getBizModel()), response.getBody() == null ? writeJson(response) : response.getBody());

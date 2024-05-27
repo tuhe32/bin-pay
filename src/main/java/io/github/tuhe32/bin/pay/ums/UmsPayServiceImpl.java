@@ -224,6 +224,7 @@ public class UmsPayServiceImpl extends BasePayServiceImpl implements UmsPayServi
             request.setMerchantCode(config.getCusId());
         }
         request.setTerminalCode(config.getTid());
+        this.clearConfigHolder();
         Map<String, String> responseMap = this.postUms(SCAN_QR_ORDER, GSON.toJson(request), config, "POS扫码下单");
         return UmsPayScanQrPayResponse.of(responseMap);
     }
@@ -351,6 +352,7 @@ public class UmsPayServiceImpl extends BasePayServiceImpl implements UmsPayServi
             request.setMerchantCode(config.getCusId());
         }
         request.setTerminalCode(config.getTid());
+        this.clearConfigHolder();
         Map<String, String> responseMap = this.postUms(SCAN_QR_REFUND_ORDER, GSON.toJson(request), config, "POS退款");
         return UmsPayScanQrRefundResponse.of(responseMap);
     }
@@ -368,6 +370,7 @@ public class UmsPayServiceImpl extends BasePayServiceImpl implements UmsPayServi
         this.switchoverTo(requestMap.get("mid"));
         UmsPayConfig config = (UmsPayConfig) this.getConfig();
         UmsSignUtils.validSign(requestMap, config.getMd5Key());
+        this.clearConfigHolder();
         if (!STATUS_SUCCESS.equals(requestMap.get("status")) || !STATUS_CLOSED.equals(requestMap.get("status"))) {
             log.error("回调显示交易失败【请求参数】：{}", GSON.toJson(requestMap));
             throw new PayException(requestMap.get("status"), requestMap.get("errMsg"));
@@ -383,6 +386,7 @@ public class UmsPayServiceImpl extends BasePayServiceImpl implements UmsPayServi
             request.setMid(config.getCusId());
         }
         request.setTid(config.getTid());
+        this.clearConfigHolder();
     }
 
     public void buildBaseParams(BaseUmsPayRequest request, UmsPayConfig config) {

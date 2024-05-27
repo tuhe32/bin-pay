@@ -84,7 +84,12 @@ public class WechatTest {
 
     public void testNotify(String notifyData) {
         try {
-            // 【@RequestBody String notifyData】， 从body里获取数据
+            /**
+             * 【@RequestBody String notifyData】， 从body里获取数据
+             * 如果只有一个mchId，可以不用切换
+             * 如果有多个商户，最好在回调地址里写死一个商户号，通过@PathVariable String mchId 获取商户号，先切换商户
+             */
+//            wxPayI.switchoverTo("mchId");
             WxPayNotifyV3Result.DecryptNotifyResult notify = wxPayI.notify(notifyData);
             // 没有异常即代表-异步回调成功
             log.info("异步回调成功");

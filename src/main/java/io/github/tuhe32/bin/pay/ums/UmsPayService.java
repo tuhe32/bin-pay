@@ -75,6 +75,11 @@ public interface UmsPayService {
     boolean switchoverTo(String appId) throws PayException;
 
     /**
+     * 清除在ThreadLocal中的配置数据
+     */
+    void clearConfigHolder();
+
+    /**
      * 小程序支付
      *
      * @param request 小程序支付请求

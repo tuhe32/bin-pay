@@ -76,6 +76,11 @@ public interface WxPayI {
     boolean switchoverTo(String mchId) throws PayException;
 
     /**
+     * 清除在ThreadLocal中的配置数据
+     */
+    void clearConfigHolder();
+
+    /**
      * 扫码支付
      *
      * @param sn            订单号

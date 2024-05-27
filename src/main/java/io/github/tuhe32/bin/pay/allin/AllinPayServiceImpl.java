@@ -308,6 +308,7 @@ public class AllinPayServiceImpl extends BasePayServiceImpl implements AllinPayS
         }
         params.put("signtype", config.getSignType());
         params.put("randomstr", SignUtils.randomCode(8));
+        this.clearConfigHolder();
         if (isNeedSign) {
             params.put("sign", SignUtils.sign(params, config.getAppKey(), config.getSignType()));
             return config.getDomainUrl();

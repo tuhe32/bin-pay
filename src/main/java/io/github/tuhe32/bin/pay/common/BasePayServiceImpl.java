@@ -53,7 +53,7 @@ public abstract class BasePayServiceImpl {
                 log.warn("已删除最后一个商户号配置：{}，须立即使用setConfig或setMultiConfig添加配置", cusId);
                 return;
             }
-            if (this.configHolder.get().equals(cusId)) {
+            if (this.configHolder.get() != null && this.configHolder.get().equals(cusId)) {
                 this.configMap.remove(cusId);
                 final String defaultCusId = this.configMap.keySet().iterator().next();
                 this.configHolder.set(defaultCusId);
@@ -88,6 +88,10 @@ public abstract class BasePayServiceImpl {
             return true;
         }
         throw new PayException(String.format("无法找到对应【%s】的商户号配置信息，请核实！", cusId));
+    }
+
+    public void clearConfigHolder() {
+        this.configHolder.remove();
     }
 
 

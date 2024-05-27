@@ -67,6 +67,11 @@ public interface AllinPayService {
     boolean switchoverTo(String appId) throws PayException;
 
     /**
+     * 清除在ThreadLocal中的配置数据
+     */
+    void clearConfigHolder();
+
+    /**
      * 统一收银台支付
      *
      * @param request 支付参数

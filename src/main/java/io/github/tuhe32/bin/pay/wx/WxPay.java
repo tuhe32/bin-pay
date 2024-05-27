@@ -1,6 +1,7 @@
 package io.github.tuhe32.bin.pay.wx;
 
 import com.github.binarywang.wxpay.config.WxPayConfig;
+import com.github.binarywang.wxpay.config.WxPayConfigHolder;
 import io.github.tuhe32.bin.pay.common.exception.PayException;
 import com.github.binarywang.wxpay.bean.notify.SignatureHeader;
 import com.github.binarywang.wxpay.bean.notify.WxPayNotifyV3Result;
@@ -82,6 +83,11 @@ public class WxPay implements WxPayI {
         } catch (Exception e) {
             throw new PayException(e.getMessage());
         }
+    }
+
+    @Override
+    public void clearConfigHolder() {
+        WxPayConfigHolder.remove();
     }
 
     @Override
@@ -238,6 +244,7 @@ public class WxPay implements WxPayI {
     public WxPayOrderQueryV3Result query(WxPayOrderQueryV3Request request) throws PayException {
         try {
             WxPayOrderQueryV3Result result = wxPayService.queryOrderV3(request);
+            this.clearConfigHolder();
             if ("SUCCESS".equals(result.getTradeState())) {
                 log.info("微信查询成功【请求数据】：{}\n【响应数据】：{}", GSON.toJson(request), GSON.toJson(result));
                 return result;
@@ -299,6 +306,7 @@ public class WxPay implements WxPayI {
     public WxPayRefundV3Result refund(WxPayRefundV3Request request) throws PayException {
         try {
             WxPayRefundV3Result result = wxPayService.refundV3(request);
+            this.clearConfigHolder();
             if ("SUCCESS".equals(result.getStatus())) {
                 log.info("微信退款成功【请求数据】：{}\n【响应数据】：{}", GSON.toJson(request), GSON.toJson(result));
                 return result;
@@ -324,6 +332,7 @@ public class WxPay implements WxPayI {
         try {
             WxPayNotifyV3Result notifyResult = wxPayService.parseOrderNotifyV3Result(notifyData, header);
             WxPayNotifyV3Result.DecryptNotifyResult result = notifyResult.getResult();
+            this.clearConfigHolder();
             if ("SUCCESS".equals(result.getTradeState())) {
                 log.info("微信回调成功【响应数据】：{}", GSON.toJson(result));
                 return result;
@@ -351,6 +360,7 @@ public class WxPay implements WxPayI {
 
     private <T> T postPayV3(TradeTypeEnum tradeType, WxPayUnifiedOrderV3Request request) throws PayException {
         try {
+            this.clearConfigHolder();
             T response = wxPayService.createOrderV3(tradeType, request);
             log.info("微信调用成功【请求数据】：{}\n【响应数据】：{}", GSON.toJson(request), response instanceof String ? response : GSON.toJson(response));
             return response;
