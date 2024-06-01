@@ -42,6 +42,9 @@ public class AllinPayTest {
             // 统一收银台支付，微信W06，支付宝A02
             AllinPayExtraData extraData = allinPayService.checkoutPay(new AllinPayCheckoutRequest()
                     .setReqSn("订单号").setTrxAmt(BigDecimal.valueOf(1)).setPayType("W06").setBody("测试支付"));
+            // H5收银台支付，返回给前端重定向地址
+            String redirectUrl = allinPayService.h5CheckoutPay(new AllinPayH5CheckoutRequest()
+                    .setReqSn("订单号").setTrxAmt(BigDecimal.valueOf(1)).setReturl("https://baidu.com").setBody("测试支付"));
             // 统一支付
             String payInfo = allinPayService.unitOrderPay(new AllinPayUnitOrderRequest()
                     .setReqSn("订单号").setTrxAmt(BigDecimal.valueOf(1)).setPayType("W02").setSubOpenId("openId"));

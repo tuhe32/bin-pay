@@ -10,6 +10,7 @@ public class AllinPayConstant {
     public static final String SIGN_TYPE = "RSA";
 
     public static final String SERVER_DOMAIN_PROD = "https://vsp.allinpay.com";
+    public static final String H5_SERVER_DOMAIN_PROD = "https://syb.allinpay.com";
     public static final String SERVER_DOMAIN_TEST = "https://syb-test.allinpay.com";
 
     public static final String UNIT_ORDER = "/apiweb/unitorder/pay";
@@ -18,6 +19,7 @@ public class AllinPayConstant {
     public static final String REFUND_ORDER = "/apiweb/tranx/refund";
     public static final String CANCEL_ORDER = "/apiweb/tranx/cancel";
     public static final String ADD_TERM = "/cusapi/merchantapi/addterm";
+    public static final String H5_CHECKOUT_PAY = "/apiweb/h5unionpay/unionorder";
 
 
     /**

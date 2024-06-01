@@ -10,7 +10,7 @@
   <dependency>
     <groupId>io.github.tuhe32</groupId>
     <artifactId>bin-pay</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
   </dependency>
   ```
   

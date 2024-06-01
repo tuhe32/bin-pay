@@ -68,6 +68,38 @@ public class AllinPayServiceImpl extends BasePayServiceImpl implements AllinPayS
     }
 
     /**
+     * H5收银台支付
+     *
+     * @param request 支付参数
+     * @return 前端需要重定向的地址
+     * @throws PayException 支付过程中发生的异常
+     */
+    @Override
+    public String h5CheckoutPay(AllinPayH5CheckoutRequest request) throws PayException {
+        Map<String, String> params = new HashMap<>(24);
+        params.put("reqsn", request.getReqSn());
+        params.put("trxamt", BaseWxPayRequest.yuan2Fen(request.getTrxAmt()).toString());
+        params.put("body", request.getBody());
+        params.put("returl", request.getReturl());
+        params.put("charset", "UTF-8");
+        params.put("ishide", "1");
+        params.put("version", "12");
+        if (request.getRemark() != null) {
+            params.put("remark", request.getRemark());
+        }
+        if (request.getValidTime() != null) {
+            params.put("validtime", request.getValidTime().toString());
+        }
+        if (request.getLimitPay() != null && request.getLimitPay()) {
+            params.put("limit_pay", "no_credit");
+        }
+        this.buildBaseParams(params, request);
+        String paramStr = SignUtils.buildRequestStr(params);
+        log.info("统一H5收银台【支付参数】：{}", paramStr);
+        return H5_SERVER_DOMAIN_PROD + H5_CHECKOUT_PAY + "?" + paramStr;
+    }
+
+    /**
      * 统一支付
      *
      * @param request 支付参数

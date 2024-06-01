@@ -6,20 +6,22 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
  * @author 刘斌
- * @date 2024/5/9 15:01
+ * @date 2024/6/1 17:02
  */
 @Getter
 @Setter
 @NoArgsConstructor
 @Accessors(chain = true)
-public class AllinPayCheckoutRequest extends BaseAllinPayRequest implements Serializable {
+public class AllinPayH5CheckoutRequest extends BaseAllinPayRequest implements Serializable {
 
-    private static final long serialVersionUID = -6964619821957585100L;
+    @Serial
+    private static final long serialVersionUID = 6592011224944527867L;
 
     /**
      * 商户的交易订单号
@@ -38,11 +40,12 @@ public class AllinPayCheckoutRequest extends BaseAllinPayRequest implements Seri
     private BigDecimal trxAmt;
 
     /**
-     * 交易方式
+     * 重定向到跳转地址，必须为https协议地址，且不允许带参数
      * 是否必填：是
+     * 最大取值：128
      */
-    @SerializedName(value = "paytype")
-    private String payType;
+    @SerializedName(value = "returl")
+    private String returl;
 
     /**
      * 订单标题
@@ -76,5 +79,4 @@ public class AllinPayCheckoutRequest extends BaseAllinPayRequest implements Seri
      */
     @SerializedName(value = "limit_pay")
     private Boolean limitPay;
-
 }

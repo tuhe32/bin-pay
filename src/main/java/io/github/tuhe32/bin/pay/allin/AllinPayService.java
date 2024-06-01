@@ -15,44 +15,51 @@ public interface AllinPayService {
 
     /**
      * 获取配置
+     *
      * @return 可能为null的BasePayConfig对象
      */
     BasePayConfig getConfig();
 
     /**
      * 设置配置
+     *
      * @param config 配置对象
      */
     void setConfig(BasePayConfig config);
 
     /**
      * 添加配置
-     * @param appId 应用ID
+     *
+     * @param appId         应用ID
      * @param basePayConfig 配置对象
      */
     void addConfig(String appId, BasePayConfig basePayConfig);
 
     /**
      * 移除配置
+     *
      * @param appId 应用ID
      */
     void removeConfig(String appId);
 
     /**
      * 设置多配置
+     *
      * @param basePayConfigMap 多个配置的映射表
      */
     void setMultiConfig(Map<String, BasePayConfig> basePayConfigMap);
 
     /**
      * 设置多配置并指定默认应用ID
+     *
      * @param basePayConfigMap 多个配置的映射表
-     * @param defaultCusId 默认应用ID
+     * @param defaultCusId     默认应用ID
      */
     void setMultiConfig(Map<String, BasePayConfig> basePayConfigMap, String defaultCusId);
 
     /**
      * 切换至指定应用ID的配置
+     *
      * @param appId 应用ID
      * @return 是否切换成功
      */
@@ -60,6 +67,7 @@ public interface AllinPayService {
 
     /**
      * 切换至指定应用ID的配置并返回当前对象
+     *
      * @param appId 应用ID
      * @return 当前AliPayService实例
      * @throws PayException 如果找不到指定应用ID的配置
@@ -79,6 +87,15 @@ public interface AllinPayService {
      * @throws PayException 支付过程中发生的异常
      */
     AllinPayExtraData checkoutPay(AllinPayCheckoutRequest request) throws PayException;
+
+    /**
+     * H5收银台支付
+     *
+     * @param request 支付参数
+     * @return 前端需要重定向的地址
+     * @throws PayException 支付过程中发生的异常
+     */
+    String h5CheckoutPay(AllinPayH5CheckoutRequest request) throws PayException;
 
     /**
      * 统一支付

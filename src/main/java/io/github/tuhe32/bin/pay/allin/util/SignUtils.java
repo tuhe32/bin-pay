@@ -181,7 +181,7 @@ public class SignUtils {
         }
     }
 
-    public static String buildRequestStr(Map<String, String> params) throws IOException {
+    public static String buildRequestStr(Map<String, String> params) {
         if (params == null || params.isEmpty()) {
             return "";
         }
